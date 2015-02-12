@@ -245,7 +245,7 @@ static SDL_Surface *DISPMANX_SetVideoMode(_THIS, SDL_Surface *current, int width
 		int dst_xpos  = (dispvars->amode.width - dst_width) / 2;
 		int dst_ypos  = (dispvars->amode.height - dst_height) / 2;
 
-		printf ("Dispmanx: Scaling to %d x %d", dst_width, dst_height);
+		printf ("Dispmanx: Scaling to %d x %d\n", dst_width, dst_height);
 
 		vc_dispmanx_rect_set( &(dispvars->dst_rect), dst_xpos, dst_ypos,
 		dst_width , dst_height );
