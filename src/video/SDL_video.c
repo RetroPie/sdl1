@@ -57,6 +57,9 @@ static VideoBootStrap *bootstrap[] = {
 #if SDL_VIDEO_DRIVER_FBCON
 	&FBCON_bootstrap,
 #endif
+#if SDL_VIDEO_DRIVER_DISPMANX
+	&DISPMANX_bootstrap,
+#endif
 #if SDL_VIDEO_DRIVER_DIRECTFB
 	&DirectFB_bootstrap,
 #endif
