@@ -189,15 +189,18 @@ static SDL_Surface *DISPMANX_SetVideoMode(_THIS, SDL_Surface *current, int width
 
 	uint32_t screen = 0;
 
-	bcm_host_init();
+	if ( ! dispvars->display ) {
+		bcm_host_init();
 
-	dispvars->display = vc_dispmanx_display_open( screen );
+		dispvars->display = vc_dispmanx_display_open( screen );
 
-	vc_dispmanx_display_get_info( dispvars->display, &(dispvars->amode));
-	printf( "Dispmanx: Physical video mode is %d x %d\n",
-	dispvars->amode.width, dispvars->amode.height );
-
-	DISPMANX_BlankBackground();
+		vc_dispmanx_display_get_info( dispvars->display, &(dispvars->amode));
+		printf( "Dispmanx: Physical video mode is %d x %d\n", dispvars->amode.width, dispvars->amode.height );
+		DISPMANX_BlankBackground();
+	} else {
+		free(dispvars->pixmem);
+		DISPMANX_FreeResources();
+	}
 
 	Uint32 Rmask;
 	Uint32 Gmask;
@@ -376,8 +379,6 @@ static void DISPMANX_FreeResources(void){
 
 	vc_dispmanx_resource_delete( dispvars->resources[0] );
 	vc_dispmanx_resource_delete( dispvars->resources[1] );
-
-	vc_dispmanx_display_close( dispvars->display );
 }
 
 static void DISPMANX_FreeBackground (void) {
@@ -397,9 +398,11 @@ static void DISPMANX_VideoQuit(_THIS)
 		hw_lock = NULL;
 	}
 
-	if (dispvars->pixmem != NULL){
+	if (dispvars->display) {
 		DISPMANX_FreeBackground();
 		DISPMANX_FreeResources();
+		vc_dispmanx_display_close( dispvars->display );
+		dispvars->display = NULL;
 	}
 
 	FB_CloseMouse(this);
