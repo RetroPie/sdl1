@@ -402,7 +402,7 @@ static void DISPMANX_VideoQuit(_THIS)
 		DISPMANX_FreeBackground();
 		DISPMANX_FreeResources();
 		vc_dispmanx_display_close( dispvars->display );
-		dispvars->display = NULL;
+		dispvars->display = 0;
 	}
 
 	FB_CloseMouse(this);
