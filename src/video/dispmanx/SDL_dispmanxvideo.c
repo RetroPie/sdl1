@@ -149,10 +149,26 @@ static void DISPMANX_InitDispmanx () {
 	bcm_host_init();
 	_dispvars->display = vc_dispmanx_display_open(0 /* LCD */);
 
-	/* If the console framebuffer has active overscan settings,
-	 * the user must have overscan_scale=1 in config.txt to have
-	 * the same size for both fb console and dispmanx. */
-	graphics_get_display_size(_dispvars->display, &_dispvars->dispmanx_width, &_dispvars->dispmanx_height);
+	_dispvars->dispmanx_width = 0;
+	_dispvars->dispmanx_height = 0;
+
+	/* allow overriding width/height via env vars - which is needed for fkms as
+	 * graphics_get_display_size always returns 0 for width and height */
+	if (SDL_getenv("SDL_DISPMANX_WIDTH"))
+	{
+		_dispvars->dispmanx_width = atoi(SDL_getenv("SDL_DISPMANX_WIDTH"));
+	}
+	if (SDL_getenv("SDL_DISPMANX_HEIGHT"))
+	{
+		_dispvars->dispmanx_height = atoi(SDL_getenv("SDL_DISPMANX_HEIGHT"));
+	}
+        /* if width or height is 0, try and get the display size */
+	if (! _dispvars->dispmanx_width || ! _dispvars->dispmanx_height) {
+		/* If the console framebuffer has active overscan settings,
+		 * the user must have overscan_scale=1 in config.txt to have
+		 * the same size for both fb console and dispmanx. */
+		graphics_get_display_size(_dispvars->display, &_dispvars->dispmanx_width, &_dispvars->dispmanx_height);
+	}
 
 	/* Setup some dispmanx parameters */
 	_dispvars->vc_image_ptr     = 0;
